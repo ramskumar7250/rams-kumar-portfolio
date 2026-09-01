@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "description": "RAM'S.KUMAR — Luxury Personal Portfolio for Ram Kumar Rai",
   "scripts": {
+    "build": "echo Static build ready",
     "start": "node server.js",
     "dev": "node server.js"
   },

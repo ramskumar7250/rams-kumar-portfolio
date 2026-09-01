@@ -1,4 +1,0 @@
-# Prevent Vercel from bundling local Node server as a monolith lambda
-server.js
-.env
-.env.example
