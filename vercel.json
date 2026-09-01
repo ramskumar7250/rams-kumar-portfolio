@@ -1,70 +1,14 @@
 {
-  "version": 2,
-  "builds": [
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
     {
-      "src": "api/*.js",
-      "use": "@vercel/node"
+      "source": "/projects",
+      "destination": "/projects.html"
     },
     {
-      "src": "assets/**",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "projects/*.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1.js"
-    },
-    {
-      "src": "/assets/(.*)",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      },
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/about",
-      "dest": "/about.html"
-    },
-    {
-      "src": "/skills",
-      "dest": "/skills.html"
-    },
-    {
-      "src": "/projects",
-      "dest": "/projects.html"
-    },
-    {
-      "src": "/projects/",
-      "dest": "/projects.html"
-    },
-    {
-      "src": "/experience",
-      "dest": "/experience.html"
-    },
-    {
-      "src": "/services",
-      "dest": "/services.html"
-    },
-    {
-      "src": "/contact",
-      "dest": "/contact.html"
-    },
-    {
-      "src": "/projects/(.*)",
-      "dest": "/projects/$1.html"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/projects/",
+      "destination": "/projects.html"
     }
   ]
 }
