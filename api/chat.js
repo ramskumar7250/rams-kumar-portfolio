@@ -45,20 +45,20 @@ STRICT AUTHENTICITY RULES:
 
 function getAuthenticFallback(query) {
   const q = (query || '').toLowerCase();
-  if (q.includes('who') || q.includes('about') || q.includes('ram')) {
-    return "Ram Kumar Rai (RAM'S.KUMAR) is a Web Developer, UI/UX Designer, and Digital Creator based in India. His foundation in sales, marketing, and human decision-making informs his approach to building clean, purposeful digital products.";
-  }
-  if (q.includes('project') || q.includes('work') || q.includes('udaan') || q.includes('marbha') || q.includes('notescrush') || q.includes('brainrun') || q.includes('mart') || q.includes('mithila')) {
+  if (q.includes('project') || q.includes('work') || q.includes('case') || q.includes('udaan') || q.includes('marbha') || q.includes('notescrush') || q.includes('brainrun') || q.includes('mart') || q.includes('mithila')) {
     return "Ram Kumar's confirmed projects include UdaanPlay (content streaming UX concept), NotesCrush / RAM'S.EDITION (knowledge platform), RAM'S.brainrun (interactive cognitive tools), MARBHA (dignified marriage marketplace concept), RAM's.Mart (e-commerce), and MithilaArtShop (cultural marketplace).";
   }
-  if (q.includes('skill') || q.includes('tech') || q.includes('stack') || q.includes('react') || q.includes('figma') || q.includes('css') || q.includes('html')) {
-    return "Ram works across Web Development (HTML, CSS, JavaScript, React, Responsive Design), UI/UX & Visual Design (Figma, Design Systems, Prototyping), Application Development (Flutter, Firebase), and Digital Creation.";
+  if (q.includes('skill') || q.includes('tech') || q.includes('stack') || q.includes('react') || q.includes('figma') || q.includes('css') || q.includes('html') || q.includes('tool')) {
+    return "Ram specializes in Web Development (HTML, CSS, JavaScript, React, Responsive Design), UI/UX & Visual Design (Figma, Design Systems, Prototyping), Application Development (Flutter, Firebase), and Digital Creation.";
   }
   if (q.includes('service') || q.includes('offer') || q.includes('hire') || q.includes('help') || q.includes('build')) {
     return "Ram provides services in Web Development, UI/UX Design, Web Applications, Digital Product Design, Graphics & Visual Design, and Digital Solutions.";
   }
-  if (q.includes('contact') || q.includes('email') || q.includes('whatsapp') || q.includes('reach') || q.includes('message') || q.includes('talk')) {
+  if (q.includes('contact') || q.includes('email') || q.includes('whatsapp') || q.includes('reach') || q.includes('message') || q.includes('talk') || q.includes('phone')) {
     return "You can reach Ram Kumar Rai directly via email at marva.app@gmail.com or on WhatsApp at +91 7250671023. You can also submit the contact form on this site.";
+  }
+  if (q.includes('who') || q.includes('about') || q.includes('ram') || q.includes('background') || q.includes('experience') || q.includes('role')) {
+    return "Ram Kumar Rai (RAM'S.KUMAR) is a Web Developer, UI/UX Designer, and Digital Creator based in India. His foundation in sales, marketing, and human decision-making informs his approach to building clean, purposeful digital products.";
   }
   return "I am RAM'S AI Assistant. I can answer questions about Ram Kumar Rai's background, web development and UI/UX design skills, confirmed projects (UdaanPlay, MARBHA, NotesCrush, BrainRun, RAM's.Mart, MithilaArtShop), and contact details.";
 }
