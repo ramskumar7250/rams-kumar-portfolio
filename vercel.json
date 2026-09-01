@@ -1,6 +1,14 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "functions": {
+    "server.js": {
+      "includeFiles": "{assets/**,projects/**,*.html}"
+    },
+    "api/*.js": {
+      "includeFiles": "{assets/**,projects/**,*.html}"
+    }
+  },
   "rewrites": [
     {
       "source": "/projects",

@@ -410,11 +410,15 @@ function getAuthenticFallback(query) {
   return "I'm RAM'S AI Assistant. I can tell you about Ram Kumar Rai's background, web development and UI/UX design skills, confirmed projects (UdaanPlay, MARBHA, NotesCrush, etc.), and contact details.";
 }
 
-server.listen(PORT, () => {
-  console.log(`==================================================`);
-  console.log(`  RAM'S.KUMAR Portfolio Server running on port ${PORT}`);
-  console.log(`  URL: http://localhost:${PORT}`);
-  console.log(`  Contact API: POST http://localhost:${PORT}/api/contact`);
-  console.log(`  AI Chat API: POST http://localhost:${PORT}/api/chat`);
-  console.log(`==================================================`);
-});
+if (require.main === module) {
+  server.listen(PORT, () => {
+    console.log(`==================================================`);
+    console.log(`  RAM'S.KUMAR Portfolio Server running on port ${PORT}`);
+    console.log(`  URL: http://localhost:${PORT}`);
+    console.log(`  Contact API: POST http://localhost:${PORT}/api/contact`);
+    console.log(`  AI Chat API: POST http://localhost:${PORT}/api/chat`);
+    console.log(`==================================================`);
+  });
+}
+
+module.exports = server;
