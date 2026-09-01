@@ -84,7 +84,7 @@
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: query, history })
+        body: JSON.stringify({ message: query, history: history.slice(-6) })
       });
 
       if (typing.parentNode) typing.parentNode.removeChild(typing);
@@ -106,11 +106,11 @@
   function appendFallback(query) {
     const q = query.toLowerCase();
     let reply = "Ram Kumar Rai (RAM'S.KUMAR) is a Web Developer, UI/UX Designer, and Digital Creator. You can contact him at marva.app@gmail.com or WhatsApp +91 7250671023.";
-    if (q.includes('project') || q.includes('work')) {
+    if (q.includes('project') || q.includes('work') || q.includes('udaan') || q.includes('marbha') || q.includes('notescrush') || q.includes('brainrun') || q.includes('mart') || q.includes('mithila')) {
       reply = "Ram's confirmed projects include UdaanPlay (streaming UX concept), NotesCrush / RAM'S.EDITION, RAM'S.brainrun, MARBHA (dignified marriage marketplace concept), RAM's.Mart, and MithilaArtShop.";
-    } else if (q.includes('skill') || q.includes('stack')) {
+    } else if (q.includes('skill') || q.includes('stack') || q.includes('tech') || q.includes('react') || q.includes('figma')) {
       reply = "Ram specializes in HTML, CSS, JavaScript, React, Responsive Design, UI/UX Design (Figma), Flutter, and Firebase.";
-    } else if (q.includes('contact') || q.includes('email') || q.includes('whatsapp')) {
+    } else if (q.includes('contact') || q.includes('email') || q.includes('whatsapp') || q.includes('hire')) {
       reply = "Direct Contact: Email marva.app@gmail.com | WhatsApp +91 7250671023.";
     }
     appendMessage(reply, 'bot');
