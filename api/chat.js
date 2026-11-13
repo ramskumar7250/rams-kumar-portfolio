@@ -56,7 +56,7 @@ function callMyLiveAgent(userMessage, chatHistory) {
     });
 
     const options = {
-      hostname: 'ram-ai-agent.vercel.app',
+      hostname: 'ram-ai-agent.vercel.app/api/chat',
       path: '/', 
       method: 'POST',
       headers: {
