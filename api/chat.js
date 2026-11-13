@@ -1,5 +1,3 @@
-const https = require('https');
-
 // 1. आपका पूरा पोर्टफोलियो डेटा और प्रॉम्प्ट
 const PORTFOLIO_KNOWLEDGE = `
 Identity & Positioning:
@@ -34,14 +32,13 @@ STRICT AUTHENTICITY RULES:
 - Always direct users to contact Ram via email (marva.app@gmail.com) or WhatsApp (+91 7250671023) for inquiries and collaborations.
 `;
 
-// यह वो प्रॉम्प्ट है जो आपके यूनिवर्सल एजेंट को बताएगा कि उसे पोर्टफोलियो के लिए कैसे बात करनी है
 const PORTFOLIO_SYSTEM_PROMPT = `You are the official AI Assistant for RAM'S.KUMAR (Ram Kumar Rai). 
 Your tone must be elegant, concise, confident, and highly helpful. Treat every visitor as a potential premium client. Answer strictly using confirmed facts from the knowledge base. For serious inquiries, guide them to WhatsApp (+91 7250671023) or Email.
 
 Official Knowledge Base:
 ${PORTFOLIO_KNOWLEDGE}`;
 
-// JSON पार्सर फंक्शन
+// JSON पार्सर (अगर Vercel खुद पार्स न करे तो)
 async function parseJsonBody(req) {
   if (req.body && typeof req.body === 'object') return req.body;
   if (req.body && typeof req.body === 'string') {
@@ -62,12 +59,12 @@ async function parseJsonBody(req) {
 
 // मेन API हैंडलर
 module.exports = async (req, res) => {
-  // CORS Headers (ताकि आपके पोर्टफोलियो का फ्रंटएंड इसे कॉल कर सके)
+  // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  // OPTIONS रिक्वेस्ट को तुरंत हैंडल करें
+  // OPTIONS रिक्वेस्ट
   if (req.method === 'OPTIONS') {
     res.status(204).end();
     return;
@@ -88,59 +85,32 @@ module.exports = async (req, res) => {
       return;
     }
 
-    // यहाँ हम डेटा पैक कर रहे हैं आपके यूनिवर्सल एजेंट (ram-ai-agent) के लिए
-    // बिल्कुल वैसे ही जैसे आपने Framer वाले कोड में systemPrompt भेजा था
-    const payload = JSON.stringify({
-      message: userMessage,
-      history: history,
-      systemPrompt: PORTFOLIO_SYSTEM_PROMPT 
-    });
-
-    const options = {
-      hostname: 'https://ram-ai-agent.vercel.app',
-      path: '/api/chat', // आपके एजेंट का सही एंडपॉइंट
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload)
-      },
-      timeout: 15000
-    };
-
-    // रिक्वेस्ट को यूनिवर्सल एजेंट पर भेजें
-    const agentReq = https.request(options, agentRes => {
-      let responseData = '';
-      agentRes.on('data', chunk => responseData += chunk);
-      agentRes.on('end', () => {
-        try {
-          if (agentRes.statusCode >= 200 && agentRes.statusCode < 300) {
-            const parsed = JSON.parse(responseData);
-            // जो रिप्लाई आपका एजेंट भेजेगा, उसे वापस क्लाइंट को दे देंगे
-            res.status(200).json(parsed);
-          } else {
-            console.error(`[AGENT ERROR ${agentRes.statusCode}]`, responseData);
-            res.status(agentRes.statusCode).json({ error: 'Error from Universal AI Agent' });
-          }
-        } catch (err) {
-          console.error('[PARSE ERROR]', err);
-          res.status(500).json({ error: 'Failed to parse response from agent' });
-        }
+    // यहाँ हम आपका सीधा 'fetch' मेथड इस्तेमाल कर रहे हैं (Framer की तरह)
+    try {
+      const response = await fetch("https://ram-ai-agent.vercel.app/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: userMessage,
+          history: history,
+          systemPrompt: PORTFOLIO_SYSTEM_PROMPT
+        })
       });
-    });
 
-    agentReq.on('timeout', () => {
-      agentReq.destroy();
-      res.status(504).json({ error: 'Agent request timed out' });
-    });
+      const responseData = await response.json();
 
-    agentReq.on('error', err => {
-      console.error('[REQUEST ERROR]', err.message);
+      if (response.ok) {
+        res.status(200).json(responseData);
+      } else {
+        console.error('[AGENT API ERROR]', responseData);
+        res.status(response.status).json({ error: 'Error from Universal AI Agent' });
+      }
+    } catch (fetchErr) {
+      console.error('[FETCH ERROR]', fetchErr.message);
       res.status(500).json({ error: 'Failed to connect to agent' });
-    });
-
-    // पेलोड राइट करें और रिक्वेस्ट क्लोज करें
-    agentReq.write(payload);
-    agentReq.end();
+    }
 
   } catch (err) {
     console.error('[ENDPOINT ERROR]', err);
