@@ -1,9 +1,10 @@
 const https = require('https');
 
+// 1. UPDATED KNOWLEDGE BASE (इसमें आपकी सारी नई और एडवांस्ड स्किल्स/प्रोजेक्ट्स डाल दिए गए हैं)
 const PORTFOLIO_KNOWLEDGE = `
 Identity & Positioning:
 - Name: Ram Kumar Rai / RAM'S.KUMAR
-- Professional Roles: Web Developer, UI/UX Designer, Digital Creator
+- Professional Roles: Web Developer, UI/UX Designer, AI Automation Expert, Digital Creator
 - Location: India
 - Contact Email: marva.app@gmail.com
 - Contact WhatsApp: +91 7250671023
@@ -11,59 +12,54 @@ Identity & Positioning:
 - Philosophy: "Design with intention. Build with technology. Create with purpose."
 
 Background & Journey:
-- Foundation: Sales & Marketing, B2B sales, client relations, lead generation, consumer psychology and human decision-making.
-- Transition: Digital design and web development — building interfaces and web applications that serve real human needs.
-- Present: RAM'S.KUMAR — combining business insight with modern design and technology to create thoughtful digital experiences.
+- Foundation: Sales & Marketing, B2B sales, client relations, consumer psychology.
+- Transition: Advanced digital design, modern web development, and AI-driven business solutions.
+- Present: RAM'S.KUMAR — Specializing in building high-end, commission-free direct booking platforms, custom AI assistants, and premium digital experiences for international clients.
 
-Skills (Authentic ratings):
-- Web: HTML (Experienced), CSS (Experienced), JavaScript (Working Knowledge), React (Working Knowledge), Responsive Design (Experienced), Git (Working Knowledge)
-- Design: UI/UX Design (Experienced), Figma (Working Knowledge), Visual Design (Experienced), Graphics (Working Knowledge), Prototyping (Working Knowledge), Design Systems (Exploring)
-- Applications: Flutter (Working Knowledge), Firebase (Working Knowledge), Web Applications (Working Knowledge)
-- Digital: Social Media (Experienced), Content Creation (Experienced), Digital Marketing (Working Knowledge), SEO (Working Knowledge)
+Skills (Authentic ratings & Tech Stack):
+- Web Development: React, Next.js, HTML, CSS, JavaScript, Vercel Deployment (Experienced)
+- UI/UX & No-Code: Figma, Framer, Custom Code Components, Responsive Luxury Design (Experienced)
+- AI & Automation: Groq API, Google Gemini API, n8n workflows, WhatsApp API Integration (Experienced)
+- Applications: Flutter, Firebase (Working Knowledge)
 
-Confirmed Real Projects:
-1. UdaanPlay — A digital streaming and content discovery platform concept with clean, immersive UX.
-2. NotesCrush / RAM'S.EDITION — A curated notes and knowledge organisation platform.
-3. RAM'S.brainrun — An interactive digital product focused on cognitive and productivity workflows.
-4. MARBHA — A marriage marketplace concept designed with cultural sensitivity and human dignity at its core.
-5. RAM's.Mart — Clean, purposeful e-commerce web interface concept.
-6. MithilaArtShop — Cultural marketplace celebrating traditional Mithila art.
-Additional mentions: BayView Hotel demo, AI Calculator, Ram's.Udaan.
+Confirmed Real Projects & Client Work:
+1. Ocean View Agat Marina B&B (Guam) — Designed a luxury direct-booking portal with 'Stay & Sail' packages, secure payment UI (Stripe/PayPal), and direct WhatsApp concierge to bypass 9.8% OTA commissions.
+2. Mer Passion Menton (France) — Digital structuring and rental catalog integration for a premium boat rental agency.
+3. Koshi Pouch Packing Machinery — B2B industrial packaging machinery sales and field-service portal.
+4. MARBHA (Marva) — A culturally sensitive marriage marketplace concept with human dignity at its core.
+5. AI Calculator & Custom AI Agents — Built interactive AI tools and chat agents deployed on Vercel using Groq/Gemini APIs.
+6. UdaanPlay, NotesCrush, RAM's.Mart, MithilaArtShop — Clean, purpose-driven UI/UX concepts.
 
 Services Provided:
-1. Web Development — Clean, responsive websites, landing pages, and frontend architectures.
-2. UI/UX Design — Purposeful, intuitive interfaces and Figma design systems.
-3. Web Applications — Functional web apps with modern UX and clean data flow.
-4. Digital Product Design — End-to-end product design from concept to prototype.
-5. Graphics & Visual Design — Editorial brand assets and digital visuals.
-6. Digital Solutions — Strategy combining design, technology, and business thinking.
+1. High-End Web Development — Premium hospitality, B2B, and e-commerce websites.
+2. Direct Booking Systems — Commission-free portals integrated with Stripe/PayPal and WhatsApp.
+3. AI Integrations — Custom AI chat agents and automated business workflows.
+4. UI/UX Design — Purposeful, beautiful interfaces with Framer and Figma.
 
 STRICT AUTHENTICITY RULES:
-- Never fabricate clients, companies, revenue, awards, testimonials, years of experience, or fake statistics.
-- Direct users to contact Ram via email (marva.app@gmail.com) or WhatsApp (+91 7250671023) for inquiries and collaborations.
+- Never fabricate clients, awards, or fake statistics.
+- Always direct users to contact Ram via email (marva.app@gmail.com) or WhatsApp (+91 7250671023) for inquiries and collaborations.
 `;
 
+// 2. UPDATED FALLBACK LOGIC
 function getAuthenticFallback(query) {
   const q = (query || '').toLowerCase();
-  if (q.includes('project') || q.includes('work') || q.includes('case') || q.includes('udaan') || q.includes('marbha') || q.includes('notescrush') || q.includes('brainrun') || q.includes('mart') || q.includes('mithila')) {
-    return "Ram Kumar's confirmed projects include UdaanPlay (content streaming UX concept), NotesCrush / RAM'S.EDITION (knowledge platform), RAM'S.brainrun (interactive cognitive tools), MARBHA (dignified marriage marketplace concept), RAM's.Mart (e-commerce), and MithilaArtShop (cultural marketplace).";
+  if (q.includes('project') || q.includes('work') || q.includes('case') || q.includes('guam') || q.includes('france') || q.includes('marbha')) {
+    return "Ram Kumar's recent work includes luxury direct-booking portals for Ocean View Agat Marina (Guam), boat rental structuring for Mer Passion (France), Koshi Pouch Packing Machinery (B2B), and custom UI/UX projects like MARBHA, UdaanPlay, and AI Agents.";
   }
-  if (q.includes('skill') || q.includes('tech') || q.includes('stack') || q.includes('react') || q.includes('figma') || q.includes('css') || q.includes('html') || q.includes('tool')) {
-    return "Ram specializes in Web Development (HTML, CSS, JavaScript, React, Responsive Design), UI/UX & Visual Design (Figma, Design Systems, Prototyping), Application Development (Flutter, Firebase), and Digital Creation.";
+  if (q.includes('skill') || q.includes('tech') || q.includes('stack') || q.includes('react') || q.includes('framer') || q.includes('ai')) {
+    return "Ram specializes in React, Next.js, Framer, Figma, UI/UX Design, and AI Automations (Groq/Gemini APIs, WhatsApp direct booking integrations).";
   }
-  if (q.includes('service') || q.includes('offer') || q.includes('hire') || q.includes('help') || q.includes('build')) {
-    return "Ram provides services in Web Development, UI/UX Design, Web Applications, Digital Product Design, Graphics & Visual Design, and Digital Solutions.";
+  if (q.includes('service') || q.includes('offer') || q.includes('hire') || q.includes('build')) {
+    return "Ram builds premium commission-free booking websites, custom AI assistants, automated business workflows, and high-end UI/UX designs for international clients.";
   }
-  if (q.includes('contact') || q.includes('email') || q.includes('whatsapp') || q.includes('reach') || q.includes('message') || q.includes('talk') || q.includes('phone')) {
-    return "You can reach Ram Kumar Rai directly via email at marva.app@gmail.com or on WhatsApp at +91 7250671023. You can also submit the contact form on this site.";
+  if (q.includes('contact') || q.includes('email') || q.includes('whatsapp') || q.includes('phone')) {
+    return "You can reach Ram Kumar Rai directly via email at marva.app@gmail.com or on WhatsApp at +91 7250671023.";
   }
-  if (q.includes('who') || q.includes('about') || q.includes('ram') || q.includes('background') || q.includes('experience') || q.includes('role')) {
-    return "Ram Kumar Rai (RAM'S.KUMAR) is a Web Developer, UI/UX Designer, and Digital Creator based in India. His foundation in sales, marketing, and human decision-making informs his approach to building clean, purposeful digital products.";
-  }
-  return "I am RAM'S AI Assistant. I can answer questions about Ram Kumar Rai's background, web development and UI/UX design skills, confirmed projects (UdaanPlay, MARBHA, NotesCrush, BrainRun, RAM's.Mart, MithilaArtShop), and contact details.";
+  return "I am RAM'S AI Assistant. I can answer questions about Ram Kumar Rai's premium web development services, recent projects (like hospitality booking platforms and AI tools), and his technical skills (React, Framer, AI integrations). How can I help you today?";
 }
 
-function callGroqApi(apiKey, messages, modelName = 'qwen/qwen3.8-27b') {
+function callGroqApi(apiKey, messages, modelName = 'llama-3.3-70b-versatile') {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify({
       model: modelName,
@@ -142,7 +138,6 @@ async function parseJsonBody(req) {
 }
 
 module.exports = async (req, res) => {
-  // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -167,7 +162,6 @@ module.exports = async (req, res) => {
       return;
     }
 
-    // Read API key fresh from process.env on every request
     const apiKey = (
       process.env.GROQ_API_KEY ||
       process.env.GROQ_KEY ||
@@ -177,18 +171,20 @@ module.exports = async (req, res) => {
     ).trim();
 
     if (apiKey) {
+      // 3. UPDATED SYSTEM PROMPT (यह तय करेगा कि एजेंट क्लाइंट से कैसे बात करेगा)
       const messages = [
         {
           role: 'system',
-          content: `You are the official AI Assistant for RAM'S.KUMAR (Ram Kumar Rai), a Web Developer, UI/UX Designer, and Digital Creator based in India.
-Your role is to assist visitors in exploring Ram Kumar's portfolio, background, real projects, skills, and contact details with an elegant, concise, and luxurious tone.
+          content: `You are the official AI Assistant for RAM'S.KUMAR (Ram Kumar Rai), a highly skilled Web Developer, UI/UX Designer, and AI Automation Expert based in India.
+          
+Your role is to assist visitors, potential clients, and business owners in exploring Ram Kumar's portfolio with a highly professional, luxurious, and solution-oriented tone.
 
-Strict Rules:
-- Answer accurately and concisely using confirmed facts from the knowledge base below.
-- If asked to verify API status or say a phrase, comply politely.
-- NEVER invent clients, awards, revenue, statistics, fake project results, companies, or fake certifications.
-- If asked about something unconfirmed, politely clarify that it is not listed in Ram's official portfolio.
-- Encourage serious inquiries to email marva.app@gmail.com or WhatsApp +91 7250671023.
+Core Instructions & Interaction Guidelines:
+1. Positioning: Present Ram as an expert who solves real business problems (e.g., bypassing OTA commissions like Booking.com/Airbnb, creating direct booking systems, integrating secure payments, and automating workflows with AI).
+2. Tone: Elegant, concise, confident, and highly helpful. Treat every visitor as a potential premium client.
+3. Accuracy: Answer strictly using confirmed facts from the knowledge base below. Do not invent clients, tools, or statistics.
+4. Call to Action: For any serious project inquiries, collaborations, or custom development requests, warmly guide the user to contact Ram directly via WhatsApp (+91 7250671023) or Email (marva.app@gmail.com).
+5. If asked about unconfirmed details, politely state that it is not part of Ram's official public portfolio, but encourage them to contact Ram for custom inquiries.
 
 Official Knowledge Base:
 ${PORTFOLIO_KNOWLEDGE}`
@@ -219,7 +215,6 @@ ${PORTFOLIO_KNOWLEDGE}`
       }
     }
 
-    // When no API key is configured, return grounded portfolio knowledge
     const fallback = getAuthenticFallback(userMessage);
     res.status(200).json({ reply: fallback });
   } catch (err) {
