@@ -1,6 +1,6 @@
 const https = require('https');
 
-// 1. UPDATED KNOWLEDGE BASE (इसमें आपकी सारी नई और एडवांस्ड स्किल्स/प्रोजेक्ट्स डाल दिए गए हैं)
+// 1. UPDATED KNOWLEDGE BASE (आपकी सारी स्किल्स और प्रोजेक्ट्स)
 const PORTFOLIO_KNOWLEDGE = `
 Identity & Positioning:
 - Name: Ram Kumar Rai / RAM'S.KUMAR
@@ -41,7 +41,22 @@ STRICT AUTHENTICITY RULES:
 - Always direct users to contact Ram via email (marva.app@gmail.com) or WhatsApp (+91 7250671023) for inquiries and collaborations.
 `;
 
-// 2. UPDATED FALLBACK LOGIC
+// 2. SYSTEM PROMPT (एजेंट को कैसे बात करनी है)
+const SYSTEM_PROMPT = `You are the official AI Assistant for RAM'S.KUMAR (Ram Kumar Rai), a highly skilled Web Developer, UI/UX Designer, and AI Automation Expert based in India.
+          
+Your role is to assist visitors, potential clients, and business owners in exploring Ram Kumar's portfolio with a highly professional, luxurious, and solution-oriented tone.
+
+Core Instructions & Interaction Guidelines:
+1. Positioning: Present Ram as an expert who solves real business problems (e.g., bypassing OTA commissions like Booking.com/Airbnb, creating direct booking systems, integrating secure payments, and automating workflows with AI).
+2. Tone: Elegant, concise, confident, and highly helpful. Treat every visitor as a potential premium client.
+3. Accuracy: Answer strictly using confirmed facts from the knowledge base below. Do not invent clients, tools, or statistics.
+4. Call to Action: For any serious project inquiries, collaborations, or custom development requests, warmly guide the user to contact Ram directly via WhatsApp (+91 7250671023) or Email (marva.app@gmail.com).
+
+Official Knowledge Base:
+${PORTFOLIO_KNOWLEDGE}`;
+
+
+// 3. FALLBACK LOGIC (अगर आपका लाइव URL डाउन हो)
 function getAuthenticFallback(query) {
   const q = (query || '').toLowerCase();
   if (q.includes('project') || q.includes('work') || q.includes('case') || q.includes('guam') || q.includes('france') || q.includes('marbha')) {
@@ -59,24 +74,28 @@ function getAuthenticFallback(query) {
   return "I am RAM'S AI Assistant. I can answer questions about Ram Kumar Rai's premium web development services, recent projects (like hospitality booking platforms and AI tools), and his technical skills (React, Framer, AI integrations). How can I help you today?";
 }
 
-function callGroqApi(apiKey, messages, modelName = 'qwen/qwen3.8-27b') {
+// 4. DIRECT CONNECTION TO YOUR OWN AI AGENT
+function callRamAiAgent(userMessage, chatHistory) {
   return new Promise((resolve, reject) => {
+    
+    // आपके प्रॉम्प्ट को हिस्ट्री में 'system' की तरह जोड़ दिया गया है, ताकि आपका लाइव मॉडल इसे पढ़ ले
+    const fullHistory = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      ...chatHistory
+    ];
+
     const payload = JSON.stringify({
-      model: modelName,
-      messages,
-      temperature: 0.5,
-      max_tokens: 400
+      message: userMessage,
+      history: fullHistory
     });
 
     const options = {
-      hostname: 'api.groq.com',
-      path: '/openai/v1/chat/completions',
+      hostname: 'ram-ai-agent.vercel.app',
+      path: '/', // (अगर आपका API रूट /api/chat है, तो इसे बदल देना)
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Length': Buffer.byteLength(payload),
-        'User-Agent': 'RAMS-KUMAR-Portfolio/2.0'
+        'Content-Length': Buffer.byteLength(payload)
       },
       timeout: 15000
     };
@@ -88,15 +107,16 @@ function callGroqApi(apiKey, messages, modelName = 'qwen/qwen3.8-27b') {
         try {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             const parsed = JSON.parse(data);
-            const content = parsed.choices?.[0]?.message?.content;
+            // आपका लाइव URL जो रिस्पॉन्स भेजता है
+            const content = parsed.reply || parsed.response;
             if (content) {
               resolve(content.trim());
             } else {
-              reject(new Error('Empty content in Groq response'));
+              reject(new Error('Empty content received from Ram AI Agent'));
             }
           } else {
-            console.error(`[GROQ API ERROR ${res.statusCode}]`, data);
-            reject(new Error(`Groq API returned HTTP ${res.statusCode}: ${data}`));
+            console.error(`[RAM AI AGENT ERROR ${res.statusCode}]`, data);
+            reject(new Error(`Ram AI Agent returned HTTP ${res.statusCode}: ${data}`));
           }
         } catch (err) {
           reject(err);
@@ -106,11 +126,11 @@ function callGroqApi(apiKey, messages, modelName = 'qwen/qwen3.8-27b') {
 
     req.on('timeout', () => {
       req.destroy();
-      reject(new Error('Groq API request timed out'));
+      reject(new Error('Ram AI Agent request timed out'));
     });
 
     req.on('error', err => {
-      console.error('[GROQ REQUEST ERROR]', err.message);
+      console.error('[REQUEST ERROR]', err.message);
       reject(err);
     });
 
@@ -119,6 +139,7 @@ function callGroqApi(apiKey, messages, modelName = 'qwen/qwen3.8-27b') {
   });
 }
 
+// JSON Parser
 async function parseJsonBody(req) {
   if (req.body && typeof req.body === 'object') return req.body;
   if (req.body && typeof req.body === 'string') {
@@ -138,6 +159,7 @@ async function parseJsonBody(req) {
 }
 
 module.exports = async (req, res) => {
+  // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -155,68 +177,29 @@ module.exports = async (req, res) => {
   try {
     const data = await parseJsonBody(req);
     const userMessage = (data.message || '').trim();
-    const history = Array.isArray(data.history) ? data.history.slice(-6) : [];
+    // History format
+    const history = Array.isArray(data.history) ? data.history.map(h => ({
+      role: h.role === 'user' ? 'user' : 'assistant',
+      content: String(h.content || '').slice(0, 500)
+    })).slice(-6) : [];
 
     if (!userMessage) {
       res.status(400).json({ error: 'Message cannot be empty.' });
       return;
     }
 
-    const apiKey = (
-      process.env.GROQ_API_KEY ||
-      process.env.GROQ_KEY ||
-      process.env.GROQ_API_TOKEN ||
-      process.env.GROQ_TOKEN ||
-      ''
-    ).trim();
-
-    if (apiKey) {
-      // 3. UPDATED SYSTEM PROMPT (यह तय करेगा कि एजेंट क्लाइंट से कैसे बात करेगा)
-      const messages = [
-        {
-          role: 'system',
-          content: `You are the official AI Assistant for RAM'S.KUMAR (Ram Kumar Rai), a highly skilled Web Developer, UI/UX Designer, and AI Automation Expert based in India.
-          
-Your role is to assist visitors, potential clients, and business owners in exploring Ram Kumar's portfolio with a highly professional, luxurious, and solution-oriented tone.
-
-Core Instructions & Interaction Guidelines:
-1. Positioning: Present Ram as an expert who solves real business problems (e.g., bypassing OTA commissions like Booking.com/Airbnb, creating direct booking systems, integrating secure payments, and automating workflows with AI).
-2. Tone: Elegant, concise, confident, and highly helpful. Treat every visitor as a potential premium client.
-3. Accuracy: Answer strictly using confirmed facts from the knowledge base below. Do not invent clients, tools, or statistics.
-4. Call to Action: For any serious project inquiries, collaborations, or custom development requests, warmly guide the user to contact Ram directly via WhatsApp (+91 7250671023) or Email (marva.app@gmail.com).
-5. If asked about unconfirmed details, politely state that it is not part of Ram's official public portfolio, but encourage them to contact Ram for custom inquiries.
-
-Official Knowledge Base:
-${PORTFOLIO_KNOWLEDGE}`
-        },
-        ...history.map(h => ({
-          role: h.role === 'user' ? 'user' : 'assistant',
-          content: String(h.content || '').slice(0, 500)
-        })),
-        { role: 'user', content: userMessage.slice(0, 500) }
-      ];
-
-      try {
-        const reply = await callGroqApi(apiKey, messages, 'llama-3.3-70b-versatile');
-        res.status(200).json({ reply });
-        return;
-      } catch (groqErr) {
-        console.warn('[GROQ PRIMARY MODEL FAILED, RETRYING WITH llama-3.1-8b-instant]', groqErr.message);
-        try {
-          const fallbackReply = await callGroqApi(apiKey, messages, 'llama-3.1-8b-instant');
-          res.status(200).json({ reply: fallbackReply });
-          return;
-        } catch (retryErr) {
-          console.error('[GROQ RETRY FAILED]', retryErr.message);
-          const fallback = getAuthenticFallback(userMessage);
-          res.status(200).json({ reply: fallback });
-          return;
-        }
-      }
+    try {
+      // सीधे आपके Vercel AI URL को कॉल कर रहे हैं (बिना किसी Groq मॉडल के)
+      const reply = await callRamAiAgent(userMessage, history);
+      res.status(200).json({ reply });
+      return;
+    } catch (apiErr) {
+      console.warn('[LIVE AI URL FAILED, RETRYING WITH FALLBACK]', apiErr.message);
+      const fallback = getAuthenticFallback(userMessage);
+      res.status(200).json({ reply: fallback });
+      return;
     }
 
-    const fallback = getAuthenticFallback(userMessage);
-    res.status(200).json({ reply: fallback });
   } catch (err) {
     console.error('[CHAT ENDPOINT ERROR]', err);
     res.status(500).json({ error: 'Internal server error while processing chat request.' });
