@@ -63,7 +63,7 @@ function getAuthenticFallback(query) {
   return "I am RAM'S AI Assistant. I can answer questions about Ram Kumar Rai's background, web development and UI/UX design skills, confirmed projects (UdaanPlay, MARBHA, NotesCrush, BrainRun, RAM's.Mart, MithilaArtShop), and contact details.";
 }
 
-function callGroqApi(apiKey, messages, modelName = 'llama-3.3-70b-versatile') {
+function callGroqApi(apiKey, messages, modelName = 'qwen/qwen3.8-27b') {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify({
       model: modelName,
