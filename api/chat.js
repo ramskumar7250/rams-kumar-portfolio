@@ -1,6 +1,6 @@
 const https = require('https');
 
-// 1. UPDATED KNOWLEDGE BASE (आपकी सारी स्किल्स और प्रोजेक्ट्स)
+// 1. आपका पूरा पोर्टफोलियो डेटा और प्रॉम्प्ट
 const PORTFOLIO_KNOWLEDGE = `
 Identity & Positioning:
 - Name: Ram Kumar Rai / RAM'S.KUMAR
@@ -9,7 +9,6 @@ Identity & Positioning:
 - Contact Email: marva.app@gmail.com
 - Contact WhatsApp: +91 7250671023
 - Direct Website: https://rams-kumar.vercel.app
-- Philosophy: "Design with intention. Build with technology. Create with purpose."
 
 Background & Journey:
 - Foundation: Sales & Marketing, B2B sales, client relations, consumer psychology.
@@ -19,7 +18,7 @@ Background & Journey:
 Skills (Authentic ratings & Tech Stack):
 - Web Development: React, Next.js, HTML, CSS, JavaScript, Vercel Deployment (Experienced)
 - UI/UX & No-Code: Figma, Framer, Custom Code Components, Responsive Luxury Design (Experienced)
-- AI & Automation: Groq API, Google Gemini API, n8n workflows, WhatsApp API Integration (Experienced)
+- AI & Automation: n8n workflows, WhatsApp API Integration (Experienced)
 - Applications: Flutter, Firebase (Working Knowledge)
 
 Confirmed Real Projects & Client Work:
@@ -27,58 +26,25 @@ Confirmed Real Projects & Client Work:
 2. Mer Passion Menton (France) — Digital structuring and rental catalog integration for a premium boat rental agency.
 3. Koshi Pouch Packing Machinery — B2B industrial packaging machinery sales and field-service portal.
 4. MARBHA (Marva) — A culturally sensitive marriage marketplace concept with human dignity at its core.
-5. AI Calculator & Custom AI Agents — Built interactive AI tools and chat agents deployed on Vercel using Groq/Gemini APIs.
+5. AI Calculator & Custom AI Agents — Built interactive AI tools and chat agents deployed on Vercel.
 6. UdaanPlay, NotesCrush, RAM's.Mart, MithilaArtShop — Clean, purpose-driven UI/UX concepts.
-
-Services Provided:
-1. High-End Web Development — Premium hospitality, B2B, and e-commerce websites.
-2. Direct Booking Systems — Commission-free portals integrated with Stripe/PayPal and WhatsApp.
-3. AI Integrations — Custom AI chat agents and automated business workflows.
-4. UI/UX Design — Purposeful, beautiful interfaces with Framer and Figma.
 
 STRICT AUTHENTICITY RULES:
 - Never fabricate clients, awards, or fake statistics.
 - Always direct users to contact Ram via email (marva.app@gmail.com) or WhatsApp (+91 7250671023) for inquiries and collaborations.
 `;
 
-// 2. SYSTEM PROMPT (एजेंट को कैसे बात करनी है)
-const SYSTEM_PROMPT = `You are the official AI Assistant for RAM'S.KUMAR (Ram Kumar Rai), a highly skilled Web Developer, UI/UX Designer, and AI Automation Expert based in India.
-          
-Your role is to assist visitors, potential clients, and business owners in exploring Ram Kumar's portfolio with a highly professional, luxurious, and solution-oriented tone.
-
-Core Instructions & Interaction Guidelines:
-1. Positioning: Present Ram as an expert who solves real business problems (e.g., bypassing OTA commissions like Booking.com/Airbnb, creating direct booking systems, integrating secure payments, and automating workflows with AI).
-2. Tone: Elegant, concise, confident, and highly helpful. Treat every visitor as a potential premium client.
-3. Accuracy: Answer strictly using confirmed facts from the knowledge base below. Do not invent clients, tools, or statistics.
-4. Call to Action: For any serious project inquiries, collaborations, or custom development requests, warmly guide the user to contact Ram directly via WhatsApp (+91 7250671023) or Email (marva.app@gmail.com).
+const SYSTEM_PROMPT = `You are the official AI Assistant for RAM'S.KUMAR (Ram Kumar Rai). 
+Your tone must be elegant, concise, confident, and highly helpful. Treat every visitor as a potential premium client. Answer strictly using confirmed facts from the knowledge base. For serious inquiries, guide them to WhatsApp (+91 7250671023) or Email.
 
 Official Knowledge Base:
 ${PORTFOLIO_KNOWLEDGE}`;
 
-
-// 3. FALLBACK LOGIC (अगर आपका लाइव URL डाउन हो)
-function getAuthenticFallback(query) {
-  const q = (query || '').toLowerCase();
-  if (q.includes('project') || q.includes('work') || q.includes('case') || q.includes('guam') || q.includes('france') || q.includes('marbha')) {
-    return "Ram Kumar's recent work includes luxury direct-booking portals for Ocean View Agat Marina (Guam), boat rental structuring for Mer Passion (France), Koshi Pouch Packing Machinery (B2B), and custom UI/UX projects like MARBHA, UdaanPlay, and AI Agents.";
-  }
-  if (q.includes('skill') || q.includes('tech') || q.includes('stack') || q.includes('react') || q.includes('framer') || q.includes('ai')) {
-    return "Ram specializes in React, Next.js, Framer, Figma, UI/UX Design, and AI Automations (Groq/Gemini APIs, WhatsApp direct booking integrations).";
-  }
-  if (q.includes('service') || q.includes('offer') || q.includes('hire') || q.includes('build')) {
-    return "Ram builds premium commission-free booking websites, custom AI assistants, automated business workflows, and high-end UI/UX designs for international clients.";
-  }
-  if (q.includes('contact') || q.includes('email') || q.includes('whatsapp') || q.includes('phone')) {
-    return "You can reach Ram Kumar Rai directly via email at marva.app@gmail.com or on WhatsApp at +91 7250671023.";
-  }
-  return "I am RAM'S AI Assistant. I can answer questions about Ram Kumar Rai's premium web development services, recent projects (like hospitality booking platforms and AI tools), and his technical skills (React, Framer, AI integrations). How can I help you today?";
-}
-
-// 4. DIRECT CONNECTION TO YOUR OWN AI AGENT
-function callRamAiAgent(userMessage, chatHistory) {
+// 2. डायरेक्ट आपके लाइव लिंक (ram-ai-agent.vercel.app) को कॉल करने वाला फंक्शन
+function callMyLiveAgent(userMessage, chatHistory) {
   return new Promise((resolve, reject) => {
     
-    // आपके प्रॉम्प्ट को हिस्ट्री में 'system' की तरह जोड़ दिया गया है, ताकि आपका लाइव मॉडल इसे पढ़ ले
+    // आपके प्रॉम्प्ट को हिस्ट्री में 'system' की तरह जोड़ दिया, ताकि आपका एजेंट इसे समझ ले
     const fullHistory = [
       { role: 'system', content: SYSTEM_PROMPT },
       ...chatHistory
@@ -91,7 +57,7 @@ function callRamAiAgent(userMessage, chatHistory) {
 
     const options = {
       hostname: 'ram-ai-agent.vercel.app',
-      path: '/', // (अगर आपका API रूट /api/chat है, तो इसे बदल देना)
+      path: '/', 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -107,16 +73,15 @@ function callRamAiAgent(userMessage, chatHistory) {
         try {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             const parsed = JSON.parse(data);
-            // आपका लाइव URL जो रिस्पॉन्स भेजता है
-            const content = parsed.reply || parsed.response;
+            // आपका एजेंट जो 'reply' भेजता है, उसे सीधा पकड़ लिया
+            const content = parsed.reply || parsed.response || parsed.choices?.[0]?.message?.content;
             if (content) {
               resolve(content.trim());
             } else {
-              reject(new Error('Empty content received from Ram AI Agent'));
+              reject(new Error('No readable reply received from your live agent'));
             }
           } else {
-            console.error(`[RAM AI AGENT ERROR ${res.statusCode}]`, data);
-            reject(new Error(`Ram AI Agent returned HTTP ${res.statusCode}: ${data}`));
+            reject(new Error(`Live Agent returned HTTP ${res.statusCode}: ${data}`));
           }
         } catch (err) {
           reject(err);
@@ -126,11 +91,10 @@ function callRamAiAgent(userMessage, chatHistory) {
 
     req.on('timeout', () => {
       req.destroy();
-      reject(new Error('Ram AI Agent request timed out'));
+      reject(new Error('Live Agent request timed out'));
     });
 
     req.on('error', err => {
-      console.error('[REQUEST ERROR]', err.message);
       reject(err);
     });
 
@@ -158,6 +122,7 @@ async function parseJsonBody(req) {
   });
 }
 
+// 3. MAIN HANDLER
 module.exports = async (req, res) => {
   // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -177,6 +142,7 @@ module.exports = async (req, res) => {
   try {
     const data = await parseJsonBody(req);
     const userMessage = (data.message || '').trim();
+    
     // History format
     const history = Array.isArray(data.history) ? data.history.map(h => ({
       role: h.role === 'user' ? 'user' : 'assistant',
@@ -189,19 +155,17 @@ module.exports = async (req, res) => {
     }
 
     try {
-      // सीधे आपके Vercel AI URL को कॉल कर रहे हैं (बिना किसी Groq मॉडल के)
-      const reply = await callRamAiAgent(userMessage, history);
+      // सीधा आपके वर्किंग लिंक को कॉल
+      const reply = await callMyLiveAgent(userMessage, history);
       res.status(200).json({ reply });
-      return;
     } catch (apiErr) {
-      console.warn('[LIVE AI URL FAILED, RETRYING WITH FALLBACK]', apiErr.message);
-      const fallback = getAuthenticFallback(userMessage);
-      res.status(200).json({ reply: fallback });
-      return;
+      console.error('[LIVE AGENT ERROR]', apiErr.message);
+      // फॉलबैक मेसेज
+      res.status(200).json({ reply: "Hello! I am RAM'S AI Assistant. I can help you with details about his Web Development services, UI/UX design, or recent projects like the Guam Booking Portal. For direct inquiries, please contact +91 7250671023 on WhatsApp." });
     }
 
   } catch (err) {
-    console.error('[CHAT ENDPOINT ERROR]', err);
-    res.status(500).json({ error: 'Internal server error while processing chat request.' });
+    console.error('[ENDPOINT ERROR]', err);
+    res.status(500).json({ error: 'Internal server error while processing request.' });
   }
 };
