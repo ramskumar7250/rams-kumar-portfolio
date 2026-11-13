@@ -34,76 +34,14 @@ STRICT AUTHENTICITY RULES:
 - Always direct users to contact Ram via email (marva.app@gmail.com) or WhatsApp (+91 7250671023) for inquiries and collaborations.
 `;
 
-const SYSTEM_PROMPT = `You are the official AI Assistant for RAM'S.KUMAR (Ram Kumar Rai). 
+// यह वो प्रॉम्प्ट है जो आपके यूनिवर्सल एजेंट को बताएगा कि उसे पोर्टफोलियो के लिए कैसे बात करनी है
+const PORTFOLIO_SYSTEM_PROMPT = `You are the official AI Assistant for RAM'S.KUMAR (Ram Kumar Rai). 
 Your tone must be elegant, concise, confident, and highly helpful. Treat every visitor as a potential premium client. Answer strictly using confirmed facts from the knowledge base. For serious inquiries, guide them to WhatsApp (+91 7250671023) or Email.
 
 Official Knowledge Base:
 ${PORTFOLIO_KNOWLEDGE}`;
 
-// 2. डायरेक्ट आपके लाइव लिंक (ram-ai-agent.vercel.app) को कॉल करने वाला फंक्शन
-function callMyLiveAgent(userMessage, chatHistory) {
-  return new Promise((resolve, reject) => {
-    
-    // आपके प्रॉम्प्ट को हिस्ट्री में 'system' की तरह जोड़ दिया, ताकि आपका एजेंट इसे समझ ले
-    const fullHistory = [
-      { role: 'system', content: SYSTEM_PROMPT },
-      ...chatHistory
-    ];
-
-    const payload = JSON.stringify({
-      message: userMessage,
-      history: fullHistory
-    });
-
-    const options = {
-      hostname: 'ram-ai-agent.vercel.app/api/chat',
-      path: '/', 
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload)
-      },
-      timeout: 15000
-    };
-
-    const req = https.request(options, res => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => {
-        try {
-          if (res.statusCode >= 200 && res.statusCode < 300) {
-            const parsed = JSON.parse(data);
-            // आपका एजेंट जो 'reply' भेजता है, उसे सीधा पकड़ लिया
-            const content = parsed.reply || parsed.response || parsed.choices?.[0]?.message?.content;
-            if (content) {
-              resolve(content.trim());
-            } else {
-              reject(new Error('No readable reply received from your live agent'));
-            }
-          } else {
-            reject(new Error(`Live Agent returned HTTP ${res.statusCode}: ${data}`));
-          }
-        } catch (err) {
-          reject(err);
-        }
-      });
-    });
-
-    req.on('timeout', () => {
-      req.destroy();
-      reject(new Error('Live Agent request timed out'));
-    });
-
-    req.on('error', err => {
-      reject(err);
-    });
-
-    req.write(payload);
-    req.end();
-  });
-}
-
-// JSON Parser
+// JSON पार्सर फंक्शन
 async function parseJsonBody(req) {
   if (req.body && typeof req.body === 'object') return req.body;
   if (req.body && typeof req.body === 'string') {
@@ -122,13 +60,14 @@ async function parseJsonBody(req) {
   });
 }
 
-// 3. MAIN HANDLER
+// मेन API हैंडलर
 module.exports = async (req, res) => {
-  // CORS Headers
+  // CORS Headers (ताकि आपके पोर्टफोलियो का फ्रंटएंड इसे कॉल कर सके)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
+  // OPTIONS रिक्वेस्ट को तुरंत हैंडल करें
   if (req.method === 'OPTIONS') {
     res.status(204).end();
     return;
@@ -142,27 +81,66 @@ module.exports = async (req, res) => {
   try {
     const data = await parseJsonBody(req);
     const userMessage = (data.message || '').trim();
-    
-    // History format
-    const history = Array.isArray(data.history) ? data.history.map(h => ({
-      role: h.role === 'user' ? 'user' : 'assistant',
-      content: String(h.content || '').slice(0, 500)
-    })).slice(-6) : [];
+    const history = Array.isArray(data.history) ? data.history : [];
 
     if (!userMessage) {
       res.status(400).json({ error: 'Message cannot be empty.' });
       return;
     }
 
-    try {
-      // सीधा आपके वर्किंग लिंक को कॉल
-      const reply = await callMyLiveAgent(userMessage, history);
-      res.status(200).json({ reply });
-    } catch (apiErr) {
-      console.error('[LIVE AGENT ERROR]', apiErr.message);
-      // फॉलबैक मेसेज
-      res.status(200).json({ reply: "Hello! I am RAM'S AI Assistant. I can help you with details about his Web Development services, UI/UX design, or recent projects like the Guam Booking Portal. For direct inquiries, please contact +91 7250671023 on WhatsApp." });
-    }
+    // यहाँ हम डेटा पैक कर रहे हैं आपके यूनिवर्सल एजेंट (ram-ai-agent) के लिए
+    // बिल्कुल वैसे ही जैसे आपने Framer वाले कोड में systemPrompt भेजा था
+    const payload = JSON.stringify({
+      message: userMessage,
+      history: history,
+      systemPrompt: PORTFOLIO_SYSTEM_PROMPT 
+    });
+
+    const options = {
+      hostname: 'ram-ai-agent.vercel.app',
+      path: '/api/chat', // आपके एजेंट का सही एंडपॉइंट
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(payload)
+      },
+      timeout: 15000
+    };
+
+    // रिक्वेस्ट को यूनिवर्सल एजेंट पर भेजें
+    const agentReq = https.request(options, agentRes => {
+      let responseData = '';
+      agentRes.on('data', chunk => responseData += chunk);
+      agentRes.on('end', () => {
+        try {
+          if (agentRes.statusCode >= 200 && agentRes.statusCode < 300) {
+            const parsed = JSON.parse(responseData);
+            // जो रिप्लाई आपका एजेंट भेजेगा, उसे वापस क्लाइंट को दे देंगे
+            res.status(200).json(parsed);
+          } else {
+            console.error(`[AGENT ERROR ${agentRes.statusCode}]`, responseData);
+            res.status(agentRes.statusCode).json({ error: 'Error from Universal AI Agent' });
+          }
+        } catch (err) {
+          console.error('[PARSE ERROR]', err);
+          res.status(500).json({ error: 'Failed to parse response from agent' });
+        }
+      });
+    });
+
+    agentReq.on('timeout', () => {
+      agentReq.destroy();
+      res.status(504).json({ error: 'Agent request timed out' });
+    });
+
+    agentReq.on('error', err => {
+      console.error('[REQUEST ERROR]', err.message);
+      res.status(500).json({ error: 'Failed to connect to agent' });
+    });
+
+    // पेलोड राइट करें और रिक्वेस्ट क्लोज करें
+    agentReq.write(payload);
+    agentReq.end();
 
   } catch (err) {
     console.error('[ENDPOINT ERROR]', err);
