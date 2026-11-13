@@ -59,7 +59,7 @@ function getAuthenticFallback(query) {
   return "I am RAM'S AI Assistant. I can answer questions about Ram Kumar Rai's premium web development services, recent projects (like hospitality booking platforms and AI tools), and his technical skills (React, Framer, AI integrations). How can I help you today?";
 }
 
-function callGroqApi(apiKey, messages, modelName = 'llama-3.3-70b-versatile') {
+function callGroqApi(apiKey, messages, modelName = 'qwen/qwen3.8-27b') {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify({
       model: modelName,
