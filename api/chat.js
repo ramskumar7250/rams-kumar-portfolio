@@ -97,7 +97,7 @@ module.exports = async (req, res) => {
     });
 
     const options = {
-      hostname: 'ram-ai-agent.vercel.app',
+      hostname: 'https://ram-ai-agent.vercel.app/api/chat',
       path: '/api/chat', // आपके एजेंट का सही एंडपॉइंट
       method: 'POST',
       headers: {
